@@ -97,10 +97,24 @@ function drawTileOptions() {
   rect(x-1, y-1, w*4+2, h*4+2)
   image(tile.img, x, y, w*4, h*4)
 
+  if (edges != undefined) {
+    tile_edges = tile.edges.map(function(edge_id) {
+      return edges[edge_id]
+    })
+    rect(                    x - 1,           y - 9,           w*4+2,   4+2)
+    image(tile_edges[0].img, x,               y - 8,             w*4,     4)
+    rect(                    x + w*4 + 2 - 1, y - 1,             4+2, h*4+2)
+    image(tile_edges[1].img, x + w*4 + 2,     y,                   4,   h*4)
+    rect(                    x-1,             y + h*4 + 2 - 1, w*4+2,   4+2)
+    image(tile_edges[2].img, x,               y + h*4 + 2,       w*4,     4)
+    rect(                    x - 8 - 1,       y - 1,             4+2, h*4+2)
+    image(tile_edges[3].img, x - 8,           y,                   4,   h*4)
+  }
+
   textFont(textFont(), 20)
   text(`x ${tile.frequency}`, x + w + spacing, y + h + spacing)
 
-  x = width/2 + w*2 + spacing
+  x = width/2 + w*2 + spacing * 2
   y = height/2 - h*2
   for (let otherIndex of tile.right) {
     let other = tiles[otherIndex]
@@ -114,7 +128,7 @@ function drawTileOptions() {
     }
   }
 
-  x = width/2 - w*2
+  x = width/2 - w*2 - spacing
   y = height/2 - h*2
   for (let otherIndex of tile.left) {
     x -= w + spacing
@@ -129,7 +143,7 @@ function drawTileOptions() {
   }
 
   x = width/2 - w*2
-  y = height/2 - h*2
+  y = height/2 - h*2 - spacing
   for (let otherIndex of tile.up) {
     y -= h + spacing
     let other = tiles[otherIndex]
@@ -143,7 +157,7 @@ function drawTileOptions() {
   }
 
   x = width/2 - w*2
-  y = height/2 + h*2 + spacing
+  y = height/2 + h*2 + spacing * 2
   for (let otherIndex of tile.down) {
     let other = tiles[otherIndex]
     rect(x-1, y-1, w+2, h+2)

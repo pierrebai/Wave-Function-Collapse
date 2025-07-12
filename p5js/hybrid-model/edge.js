@@ -34,7 +34,8 @@ class Edge {
       // Top
       if (side == 0) {
         this.img = createImage(edge_size, edge_depth)
-        this.img.copy(img,
+        // this.img.copy(img,
+        this._copy(img,
           0, 0, img.width, edge_depth,
           0, 0, edge_size, edge_depth)
       }
@@ -42,7 +43,8 @@ class Edge {
       // Right
       if (side == 1) {
         this.img = createImage(edge_depth, edge_size)
-        this.img.copy(img,
+        // this.img.copy(img,
+        this._copy(img,
           img.width - edge_depth, 0, edge_depth, img.height,
           0,                      0, edge_depth, edge_size)
       }
@@ -50,7 +52,8 @@ class Edge {
       // Bottom
       if (side == 2) {
         this.img = createImage(edge_size, edge_depth)
-        this.img.copy(img,
+        // this.img.copy(img,
+        this._copy(img,
           0, img.height - edge_depth, img.width, edge_depth,
           0, 0,                       edge_size, edge_depth)
       }
@@ -58,7 +61,8 @@ class Edge {
       // Left
       if (side == 3) {
         this.img = createImage(edge_depth, edge_size)
-        this.img.copy(img,
+        // this.img.copy(img,
+        this._copy(img,
           0, 0, edge_depth, img.height,
           0, 0, edge_depth, edge_size)
       }
@@ -80,44 +84,59 @@ class Edge {
       edges.push(this)
     }
   
-    // _copy(img, sx, sy) {
-    //   img.loadPixels()
-    //   this.img.loadPixels()
-    //   const x_ratio = img.width / edge_size
-    //   const y_ratio = img.height / edge_size
-    //   console.log(`ratio x/y: ${x_ratio}/${y_ratio}`)
-    //   for (let x = 0; x < this.img.width; ++x) {
-    //     for (let y = 0; y < this.img.height; ++y) {
-    //       let count = 0
-    //       let r = 0.
-    //       let g = 0.
-    //       let b = 0.
-    //       for (let dx = 0; dx < x_ratio; ++dx ) {
-    //         for (let dy = 0; dy < y_ratio; ++dy ) {
-    //           let px = sx + x * x_ratio + dx
-    //           let py = sy + y * y_ratio + dy
-    //           let pi = (py * img.width + px) * 4
-    //           if (pi >= img.pixels.length)
-    //             continue
-    //           r += img.pixels[pi + 0]
-    //           g += img.pixels[pi + 1]
-    //           b += img.pixels[pi + 2]
-    //           count++
-    //         }
-    //       }
-    //       let sr = (r / count) | 0
-    //       let sg = (g / count) | 0
-    //       let sb = (b / count) | 0
-    //       this.img.pixels[(y * this.img.width + x) * 4 + 0] = sr
-    //       this.img.pixels[(y * this.img.width + x) * 4 + 1] = sg
-    //       this.img.pixels[(y * this.img.width + x) * 4 + 2] = sb
-    //       console.log(`${count}: ${r}/${g}/${b} = ${sr}/${sg}/${sb}`)
-    //     }
-    //   }
-    //   this.img.updatePixels()
-    // }
+    _copy(img, sx, sy, sw, sh, dx, dy, dw, dh) {
+      img.loadPixels()
+      this.img.loadPixels()
+      const x_ratio = sw / dw
+      const y_ratio = sh / dh
+      // console.log(`ratio x/y: ${x_ratio}/${y_ratio}`)
+      for (let x = 0; x < dw; ++x) {
+        for (let y = 0; y < dh; ++y) {
+          let count = 0
+          let r = 0.
+          let g = 0.
+          let b = 0.
+          for (let rx = 0; rx < x_ratio; ++rx ) {
+            for (let ry = 0; ry < y_ratio; ++ry ) {
+              let px = sx + x * x_ratio + rx | 0
+              let py = sy + y * y_ratio + ry | 0
+              let pi = ((py * img.width + px) * 4) | 0
+              if (pi+2 >= img.pixels.length)
+                continue
+
+              let pr = img.pixels[pi + 0]
+              let pg = img.pixels[pi + 1]
+              let pb = img.pixels[pi + 2]
+              r += pr
+              g += pg
+              b += pb
+              count++
+              // console.log(`${r}/${g}/${b} = ${pr}/${pg}/${pb}`)
+            }
+          }
+          let sr = count > 0 ? (r / count) | 0 : 0
+          let sg = count > 0 ? (g / count) | 0 : 0
+          let sb = count > 0 ? (b / count) | 0 : 0
+          let fx = dx + x
+          let fy = dy + y
+          this.img.pixels[(fy * this.img.width + fx) * 4 + 0] = sr
+          this.img.pixels[(fy * this.img.width + fx) * 4 + 1] = sg
+          this.img.pixels[(fy * this.img.width + fx) * 4 + 2] = sb
+          this.img.pixels[(fy * this.img.width + fx) * 4 + 3] = 255
+          // console.log(`${fx}/${fy}: ${count}: ${r}/${g}/${b} = ${sr}/${sg}/${sb}`)
+        }
+      }
+      this.img.updatePixels()
+    }
 
     _match(edge) {
+      // console.log(`${edge.img.width}x${edge.img.height} vs ${this.img.width}x${this.img.height}`)
+      
+      if (edge.img.width != this.img.width)
+        return false
+      if (edge.img.height != this.img.height)
+        return false
+
       this.img.loadPixels()
       edge.img.loadPixels()
 
@@ -163,7 +182,7 @@ class Edge {
           diff_g += best_g
           diff_b += best_b
         }
-        //console.log(`diff rgb: ${diff_r} ${diff_g} ${diff_b}`)
+        // console.log(`diff rgb: ${diff_r} ${diff_g} ${diff_b}`)
         if (diff_r > max_diff || diff_g > max_diff || diff_b > max_diff) {
           return false
         }
