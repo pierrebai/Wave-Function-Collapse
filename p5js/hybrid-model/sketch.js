@@ -4,12 +4,12 @@ let grid = []
 const contradictions = []
 const updateOtherOptions = new Bitmap()
 
-const DIM = 40
+let DIM = 40
 
 let updateRadiusSquared = 10000
 
 function setup() {
-  createCanvas(600, 600)
+  createCanvas(1000, 1000)
   reset()
   createUI()
 }
@@ -28,6 +28,7 @@ function clearContradictions() {
 }
 
 function clearGrid() {
+  grid = []
   for (let i = 0; i < DIM * DIM; i++) {
     grid[i] = new Cell(tiles.length)
   }

@@ -196,6 +196,17 @@ function createUI() {
 
     start_ui_line()
 
+    add_ui_to_line(createSpan('Tiles per row'))
+    gridSizeInput = add_ui_to_line(createInput(`${DIM}`, 'number'))
+    gridSizeInput.style('width:30pt')
+    gridSizeInput.input(function() {
+        DIM = max(3, int(gridSizeInput.value()))
+        reset()
+        _reload()
+    })
+
+    start_ui_line()
+
     let restartButton = add_ui_to_line(createButton('Restart'))
     restartButton.mouseClicked(start)
 

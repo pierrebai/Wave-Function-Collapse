@@ -114,8 +114,10 @@ function drawTileOptions() {
   textFont(textFont(), 20)
   text(`x ${tile.frequency}`, x + w + spacing, y + h + spacing)
 
-  x = width/2 + w*2 + spacing * 2
-  y = height/2 - h*2
+  let init_x = width/2 + w*2 + spacing * 2
+  let init_y = height/2 - h*2
+  x = init_x
+  y = init_y
   for (let otherIndex of tile.right) {
     let other = tiles[otherIndex]
     rect(x-1, y-1, w+2, h+2)
@@ -123,13 +125,15 @@ function drawTileOptions() {
 
     x += w + spacing
     if (x > width - w) {
-      x = width/2 + w*2 + spacing
+      x = init_x
       y += h + spacing
     }
   }
 
-  x = width/2 - w*2 - spacing
-  y = height/2 - h*2
+  init_x = width/2 - w*2 - spacing
+  init_y = height/2 - h*2
+  x = init_x
+  y = init_y
   for (let otherIndex of tile.left) {
     x -= w + spacing
     let other = tiles[otherIndex]
@@ -137,13 +141,15 @@ function drawTileOptions() {
     image(other.img, x, y, w, h)
 
     if (x < w + spacing) {
-      x = width/2 - w*2
+      x = init_x
       y += h + spacing 
     }
   }
 
-  x = width/2 - w*2
-  y = height/2 - h*2 - spacing
+  init_x = width/2 - w*2
+  init_y = height/2 - h*2 - spacing
+  x = init_x
+  y = init_y
   for (let otherIndex of tile.up) {
     y -= h + spacing
     let other = tiles[otherIndex]
@@ -152,12 +158,14 @@ function drawTileOptions() {
 
     if (y < h + spacing) {
       x += w + spacing
-      y = height/2 - h*2
+      y = init_y
     }
   }
 
-  x = width/2 - w*2
-  y = height/2 + h*2 + spacing * 2
+  init_x = width/2 - w*2
+  init_y = height/2 + h*2 + spacing * 2
+  x = init_x
+  y = init_y
   for (let otherIndex of tile.down) {
     let other = tiles[otherIndex]
     rect(x-1, y-1, w+2, h+2)
@@ -166,7 +174,7 @@ function drawTileOptions() {
     y += h + spacing
     if (y > height - h) {
       x += w + spacing
-      y = height/2 + h*2 + spacing
+      y = init_y
     }
   }
 
